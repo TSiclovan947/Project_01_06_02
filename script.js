@@ -3,13 +3,48 @@
       Form Validation Functions for index.html
       
       Author: Tabitha Siclovan
-      Date: 15 August 2018
+      Date: 17 August 2018
       
 */
 
 "use strict";
 
 var formValidity = true;
+
+//remove fallback placeholder text
+function zeroPlaceholder() {
+    var addressBox = document.getElementById("addrinput");
+    addressBox.style.color = "black";
+    if (addressBox.value === addressBox.placeholder) {
+        addressBox.value = "";
+    }
+}
+
+//Restore placeholder text if box contains no user entry
+function checkPlaceholder() {
+    var addressBox = document.getElementById("addrinput");
+    if (addressBox.value === "") {
+        addressBox.style.color = "rgb(178,184,183)";
+        addressBox.value = addressBox.placeholder;
+    }
+}
+
+//Add placeholder text for browsers that don't support placeholder attribute
+function generatePlaceholder() {
+    if (!Modernizr.input.placeholder) {
+        var addressBox = document.getElementById("addrinput");
+        addressBox.value = addressBox.placeholder;
+        addressBox.style.color = "rgb(178,184,183)";
+        if (addressBox.addEventListener) {
+            addressBox.addEventListener("focus", zeroPlaceholder, false);
+            addressBox.addEventListener("blur", checkPlaceholder, false);
+        }
+        else if (addressBox.attachEvent) {
+            addressBox.attachEvent("onfocus", zeroPlaceholder);
+            addressBox.attachEvent("onblur", checkPlaceholder);
+        }
+    }
+}
 
 //Function to validate required fields
 function validateRequired() {
@@ -51,6 +86,8 @@ function validateForm(evt) {
     }
 
     validateRequired();
+    //validateNumbers();
+    
     if (formValidity === true) {
         document.getElementsByTagName("form")[0].submit();
     }
@@ -60,6 +97,9 @@ function validateForm(evt) {
 //Functions to run on page load
 function loadingPage() {
     createEventListeners();
+    generatePlaceholder();
+    //checkPlaceholder();
+    //zeroPlaceholder();
 }
 
 //Function for creating event listeners
